@@ -1,68 +1,54 @@
-<!DOCTYPE>
+<!DOCTYPE html>
 <html>
-    <head>
-        <link rel="icon" href="../images/favicon.ico" />
-        <title>News & Trends</title>
-        <style>
-            .go-back {
-                font-size: 20px;
-                text-align: right;
-            }
-            .toImage {
-                width: 100%;
-                height: 500px;
-                object-fit: cover;
-            }
-        </style>
-        <script src="https://cdn.jsdelivr.net/npm/vue@3.2.8/dist/vue.global.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/brython@3.10.2/brython.js"></script>
-    </head>
-    <body>
-        <h1>News & Trend about Quantum Industry</h1>
-        <div id="app">
-            <python-interpreter></python-interpreter>
-        </div>
-        <hr/>
-        <div class="go-back">
-            <a href="../">Back to List</a>
-            <a href="#">Go to top</a>
-        </div>
-        <script>
-            const PythonInterpreter = {
-              template: `
-              <div>
-                <textarea v-model="input"></textarea>
-                <button @click="runCode">Run</button>
-                <pre>{{ output }}</pre>
-              </div>
-            `,
-              data() {
-                return {
-                  input: "",
-                  output: "",
-                };
-              },
-              methods: {
-                runCode() {
-                  const code = this.input;
-                  const stdout = [];
-                  const stderr = [];
-      
-                  // Run the code using Brython
-                  window.BrythonRunner.run(code, stdout, stderr);
-      
-                  // Set the output to the combined stdout and stderr
-                  this.output = [...stdout, ...stderr].join("\n");
-                },
-              },
-            };
-      
-            Vue.createApp({
-              components: {
-                PythonInterpreter,
-              },
-            }).mount("#app");
-          </script>
-    </body>
-</html>
+<head>
+  <title>Python Interpreter</title>
+  <meta charset="UTF-8">
+  <script src="https://cdn.jsdelivr.net/npm/vue@3.2.8/dist/vue.global.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/brython@3.10.2/brython.js"></script>
+</head>
+<body>
+  <div id="app">
+    <python-interpreter></python-interpreter>
+  </div>
 
+  <script>
+    const PythonInterpreter = {
+      template: `
+        <div>
+          <textarea v-model="input"></textarea>
+          <button @click="runCode">Run</button>
+          <pre>{{ output }}</pre>
+        </div>
+      `,
+      data() {
+        return {
+          input: '',
+          output: '',
+        };
+      },
+      methods: {
+        async runCode() {
+          const code = this.input;
+          const stdout = [];
+          const stderr = [];
+
+          // Wait for Brython to load
+          await window.BrythonRunner.ready;
+
+          // Run the code using Brython
+          window.BrythonRunner.run(code, stdout, stderr);
+
+          // Set the output to the combined stdout and stderr
+          this.output = [...stdout, ...stderr].join("\n");
+        },
+      },
+    };
+
+    Vue.createApp({
+      components: {
+        PythonInterpreter,
+      },
+    }).mount('#app');
+  </script>
+</body>
+</html>
