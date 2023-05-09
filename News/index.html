@@ -14,14 +14,55 @@
                 object-fit: cover;
             }
         </style>
+        <script src="https://cdn.jsdelivr.net/npm/vue@3.2.8/dist/vue.global.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/brython@3.10.2/brython.js"></script>
     </head>
     <body>
         <h1>News & Trend about Quantum Industry</h1>
-        <div><img class="toImage" src="images/goback_News.jpg" alt="Dummy"/></div>
+        <div id="app">
+            <python-interpreter></python-interpreter>
+        </div>
         <hr/>
         <div class="go-back">
             <a href="../">Back to List</a>
             <a href="#">Go to top</a>
         </div>
+        <script>
+            const PythonInterpreter = {
+              template: `
+              <div>
+                <textarea v-model="input"></textarea>
+                <button @click="runCode">Run</button>
+                <pre>{{ output }}</pre>
+              </div>
+            `,
+              data() {
+                return {
+                  input: "",
+                  output: "",
+                };
+              },
+              methods: {
+                runCode() {
+                  const code = this.input;
+                  const stdout = [];
+                  const stderr = [];
+      
+                  // Run the code using Brython
+                  window.BrythonRunner.run(code, stdout, stderr);
+      
+                  // Set the output to the combined stdout and stderr
+                  this.output = [...stdout, ...stderr].join("\n");
+                },
+              },
+            };
+      
+            Vue.createApp({
+              components: {
+                PythonInterpreter,
+              },
+            }).mount("#app");
+          </script>
     </body>
 </html>
+
